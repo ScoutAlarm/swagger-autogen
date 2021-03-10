@@ -1,5 +1,6 @@
 require('./src/prototype-functions')
 const fs = require('fs')
+const merge = require('lodash.merge');
 const swaggerTags = require('./src/swagger-tags')
 const handleFiles = require('./src/handle-files')
 const statics = require('./src/statics')
@@ -65,7 +66,7 @@ module.exports = function (args) {
                             console.log('Swagger-autogen:', "\x1b[31m", 'Failed ' + symbols.failed, "\x1b[0m")
                         return resolve(false)
                     }
-                    objDoc.paths = { ...objDoc.paths, ...obj }
+                    objDoc.paths = merge({}, objDoc.paths, obj);
                 }
                 let constainXML = false
                 if (JSON.stringify(objDoc).includes('application/xml'))     // TODO: improve this

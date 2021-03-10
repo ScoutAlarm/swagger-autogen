@@ -38,6 +38,7 @@
     "tape-promise": "^4.0.0"
   },
   "dependencies": {
-    "json5": "^2.2.0"
+    "json5": "^2.2.0",
+    "lodash.merge": "^4.6.2"
   }
 }
