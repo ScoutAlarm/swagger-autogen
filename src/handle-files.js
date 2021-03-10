@@ -6,10 +6,10 @@ const statics = require('./statics')
 
 /**
  * TODO: fill
- * @param {*} filePath 
- * @param {*} pathRoute 
- * @param {*} relativePath 
- * @param {*} receivedRouteMiddlewares 
+ * @param {*} filePath
+ * @param {*} pathRoute
+ * @param {*} relativePath
+ * @param {*} receivedRouteMiddlewares
  */
 function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteMiddlewares = [], restrictedContent) {
     return new Promise((resolve, reject) => {
@@ -41,7 +41,7 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
             let dataSrc = null
 
             /**
-             * CASE: 
+             * CASE:
              * import UserRouters from "./user";
              * ...
              * router.use("/", new UserRouters().routes);
@@ -85,7 +85,7 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
                 let swaggerComments = await handleData.getSwaggerComments(data)
                 data = await handleData.removeComments(data)
 
-                // Avoiding ploblems when functions has the same name of a .methods 
+                // Avoiding ploblems when functions has the same name of a .methods
                 for (let idxMet = 0; idxMet < statics.METHODS.length; ++idxMet) {
                     let method = statics.METHODS[idxMet]
                     data = data.split(new RegExp('\\.\\s*\\n*\\t*' + method))
@@ -160,7 +160,7 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
                 regexRouteMiddlewares = regexRouteMiddlewares.slice(0, -1)
                 patternsServer = [...patterns]
             } else {
-                /** 
+                /**
                  * Automatic pattern recognition
                  */
 
@@ -171,7 +171,7 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
                 serverVars = dataToGetPatterns.split(new RegExp(regex))
                 if (serverVars && serverVars.length > 1)
                     serverVars.forEach(pattern => {
-                        let auxPattern = (pattern.split(new RegExp(regex))[0].split(/\n|\s|\t|';'|\{|\}|\(|\)|\[|\]/).splice(-1)[0])  // ex.: app, route, server, etc.      
+                        let auxPattern = (pattern.split(new RegExp(regex))[0].split(/\n|\s|\t|';'|\{|\}|\(|\)|\[|\]/).splice(-1)[0])  // ex.: app, route, server, etc.
                         if (auxPattern && auxPattern != '')
                             patterns.add(auxPattern)
                     })
@@ -222,7 +222,7 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
             aData = await handleData.addReferenceToMethods(aData, patternsServer)
 
             /**
-             * CASE: 
+             * CASE:
              * router.all('/...', ...)
              */
             aData = aData.split(new RegExp("\\.\\s*all\\s*\\(\\[\\_\\[all\\]\\_\\]\\)\\(\\[\\_\\[",))
@@ -242,7 +242,7 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
                 importedFiles = await getImportedFiles(aDataRaw, relativePath)
             }
 
-            if (regex != '') {          // Some method was found like: .get, .post, etc.
+            if (regex != '' || aForcedsEndpoints.length > 0) {          // Some method was found like: .get, .post, etc.
                 aData = [...aData.split(new RegExp(regex)), ...aForcedsEndpoints]
                 aData[0] = undefined    // Delete 'header' in file
                 aData = aData.filter(data => {
@@ -350,8 +350,8 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
                     elem = await handleData.stackSymbolRecognizer(elem, '(', ')')
 
                     /**
-                     * CASE (continuing): router.use(middleware).get(...).post(...).put(...)... 
-                     * Adding middleware to be processed together with the other endpoint functions 
+                     * CASE (continuing): router.use(middleware).get(...).post(...).put(...)...
+                     * Adding middleware to be processed together with the other endpoint functions
                      */
                     if (isChained) {
                         const endpointRegex = `\\(\\[\\_\\[${predefMethod}\\]\\_\\]\\)\\(\\[\\_\\[____CHAINED____\\]\\_\\]\\)\\(\\[\\_\\[${position}\\]\\_\\]\\)\\(\\s*\\n*\\t*.${rawPath}.\\s*\\n*\\t*\\,`
@@ -384,7 +384,7 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
                         functionsInParameters = functionsInParameters.split(',')
 
                         auxElem = auxElem.replaceAll('\n', '').replaceAll(' ', '')
-                        if ((auxElem.split(",").length > 1) || predefMethod === 'use') { // 
+                        if ((auxElem.split(",").length > 1) || predefMethod === 'use') { //
                             /**
                              * Handling foo.method('/path', ..., ...)'
                              * Getting function not referenced ( such as: (req, res) => { ... } )
@@ -686,7 +686,7 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
                         continue
 
                     /**
-                     * endpointFunctions: receives the endpoint functions, local middleware and received middlewares 
+                     * endpointFunctions: receives the endpoint functions, local middleware and received middlewares
                      */
                     let localPath = swaggerTags.getPath(elemOrig, autoMode)
 
@@ -830,7 +830,7 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
                                 endpoint = await handleData.removeStrings(endpoint) // Avoiding .status(...) in string
                                 endpoint = endpoint.replaceAll('__¬¬¬__', '"')
                                 if (req) {
-                                    objParameters = handleData.getQueryAndBody(endpoint, req, objParameters)        // Search for parameters in the query and body 
+                                    objParameters = handleData.getQueryAndBody(endpoint, req, objParameters)        // Search for parameters in the query and body
                                     objParameters = handleData.getQueryIndirectly(endpoint, req, objParameters)     // Search for parameters in the query (indirectly)
                                     if (objParameters['__obj__in__body__']) {
                                         if (!objInBody)
@@ -967,7 +967,7 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
                         obj.varFileName = data.split(',').slice(-1)[0]
 
                         /**
-                         * CASE: 
+                         * CASE:
                          * import fooFoo from "./pathToFoo";
                          * ...
                          * router.use("/", new fooFoo().foo);
@@ -1086,8 +1086,8 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
 
 /**
  * TODO: fill
- * @param {*} aDataRaw 
- * @param {*} relativePath 
+ * @param {*} aDataRaw
+ * @param {*} relativePath
  */
 function getImportedFiles(aDataRaw, relativePath) {
     return new Promise(async (resolve, reject) => {
@@ -1330,8 +1330,8 @@ function getImportedFiles(aDataRaw, relativePath) {
 
 /**
  * TODO: fill
- * @param {*} fileName 
- * @param {*} refFuncao 
+ * @param {*} fileName
+ * @param {*} refFuncao
  * @param {*} isRecursive To avoid infinite loop in case of recursion
  */
 function functionRecognizerInFile(fileName, refFuncao, isRecursive = true) {
@@ -1434,7 +1434,7 @@ function functionRecognizerInFile(fileName, refFuncao, isRecursive = true) {
                         if (funcName[1])
                             funcName = funcName[1].split(/\n|\s|\t|\;|\{|\}|\(|\)|\[|\]/)
                         else
-                            return resolve(null)    // TODO: Verify 'null' case 
+                            return resolve(null)    // TODO: Verify 'null' case
                         var funcStr = await handleData.functionRecognizerInData(cleanedData, funcName[0])
                         return resolve(funcStr)
                     }
@@ -1453,7 +1453,7 @@ function functionRecognizerInFile(fileName, refFuncao, isRecursive = true) {
                         if (funcName[1])
                             funcName = funcName[1].split(/\n|\s|\t|\;|\{|\}|\(|\)|\[|\]/)
                         else
-                            return resolve(null)    // TODO: Verify 'null' case 
+                            return resolve(null)    // TODO: Verify 'null' case
                         var funcStr = await handleData.functionRecognizerInData(cleanedData, funcName[0])
                         return resolve(funcStr)
                     }
@@ -1476,7 +1476,7 @@ function verifyRouteInFile(fileName) {
 
 /**
  * TODO: fill
- * @param {*} fileName 
+ * @param {*} fileName
  */
 function getExtension(fileName) {
     return new Promise(async (resolve, reject) => {
@@ -1497,7 +1497,7 @@ function getExtension(fileName) {
 
 /**
  * TODO: fill
- * @param {*} pathFile 
+ * @param {*} pathFile
  */
 function getFileContent(pathFile) {
     return new Promise((resolve) => {
