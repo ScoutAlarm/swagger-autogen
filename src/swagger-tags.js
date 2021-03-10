@@ -11,7 +11,7 @@ function getLanguage() {
 
 /**
  * TODO: fill
- * @param {*} newLang 
+ * @param {*} newLang
  */
 function setLanguage(newLang) {
     lang = newLang
@@ -26,8 +26,8 @@ function setDefinitions(def) {
 // TODO: Refactor
 /**
  * TODO: fill
- * @param {*} def 
- * @param {*} resp 
+ * @param {*} def
+ * @param {*} resp
  */
 function formatDefinitions(def, resp = {}, constainXML) {
     if (def.$ref) {
@@ -91,8 +91,8 @@ function formatDefinitions(def, resp = {}, constainXML) {
 
 /**
  * TODO: fill
- * @param {*} elem 
- * @param {*} autoMode 
+ * @param {*} elem
+ * @param {*} autoMode
  */
 function getPath(elem, autoMode) {
     if (!elem)
@@ -137,7 +137,7 @@ function getMethodTag(data) {
 
 /**
  * Get #swagger.start and #swagger.end
- * @param {*} aData 
+ * @param {*} aData
  */
 function getForcedEndpoints(aData) {
     let aForcedsEndpoints = aData.split(new RegExp(".*#swagger.start.*|.*#swagger.end.*", "i"))
@@ -159,8 +159,19 @@ function getForcedEndpoints(aData) {
 }
 
 /**
+ * Search for #swagger.deprecated
+ * @param {*} elem
+ */
+function getDeprecatedTag(elem) {
+    if (elem.includes(statics.SWAGGER_TAG + '.deprecated'))
+        if (elem.split(statics.SWAGGER_TAG + '.deprecated')[1].replaceAll(' ', '').split('=')[1].slice(0, 4) == 'true')
+            return true
+    return false
+}
+
+/**
  * Search for #swagger.ignore
- * @param {*} elem 
+ * @param {*} elem
  */
 function getIgnoreTag(elem) {
     if (elem.includes(statics.SWAGGER_TAG + '.ignore'))
@@ -171,7 +182,7 @@ function getIgnoreTag(elem) {
 
 /**
  * Search for #swagger.auto = false   (by default is true)
- * @param {*} data 
+ * @param {*} data
  */
 function getAutoTag(data) {
     if (data.includes(statics.SWAGGER_TAG + ".auto")) {
@@ -186,9 +197,9 @@ function getAutoTag(data) {
 // pass to separated file
 /**
  * TODO: fill
- * @param {*} data 
- * @param {*} startSymbol 
- * @param {*} endSymbol 
+ * @param {*} data
+ * @param {*} startSymbol
+ * @param {*} endSymbol
  */
 function stack0SymbolRecognizer(data, startSymbol, endSymbol) {
     return new Promise((resolve) => {
@@ -220,8 +231,8 @@ function stack0SymbolRecognizer(data, startSymbol, endSymbol) {
 
 /**
  * TODO: fill
- * @param {*} data 
- * @param {*} objParameters 
+ * @param {*} data
+ * @param {*} objParameters
  */
 function getParametersTag(data, objParameters) {
     return new Promise(async (resolve) => {
@@ -256,7 +267,7 @@ function getParametersTag(data, objParameters) {
 
 /**
  * TODO: fill
- * @param {*} data 
+ * @param {*} data
  */
 function getProducesTag(data) {
     return new Promise(async (resolve) => {
@@ -285,7 +296,7 @@ function getProducesTag(data) {
 
 /**
  * TODO: fill
- * @param {*} data 
+ * @param {*} data
  */
 function getConsumesTag(data) {
     return new Promise(async (resolve) => {
@@ -315,8 +326,8 @@ function getConsumesTag(data) {
 
 /**
  * TODO: fill
- * @param {*} data 
- * @param {*} objResponses 
+ * @param {*} data
+ * @param {*} objResponses
  */
 function getResponsesTag(data, objResponses) {
     return new Promise(async (resolve) => {
@@ -362,7 +373,7 @@ function getResponsesTag(data, objResponses) {
 
 /**
  * TODO: fill
- * @param {*} aDataRaw 
+ * @param {*} aDataRaw
  */
 function getRouter(aDataRaw) {
     if (!aDataRaw)
@@ -382,7 +393,7 @@ function getRouter(aDataRaw) {
 
 /**
  * TODO: fill
- * @param {*} data 
+ * @param {*} data
  */
 function popString(data) {
     let dataAux = data.split('')
@@ -408,7 +419,7 @@ function popString(data) {
 
 /**
  * TODO: fill
- * @param {*} data 
+ * @param {*} data
  */
 function getDescription(data) {
     let swaggerDescription = data.split(new RegExp("#swagger.description\\s*\\=\\s*"))[1]
@@ -425,7 +436,7 @@ function getDescription(data) {
 
 /**
  * TODO: fill
- * @param {*} data 
+ * @param {*} data
  */
 function getSummary(data) {
     let swaggerSummary = data.split(new RegExp("#swagger.summary\\s*\\=\\s*"))[1]
@@ -442,7 +453,7 @@ function getSummary(data) {
 
 /**
  * TODO: fill
- * @param {*} data 
+ * @param {*} data
  */
 function getOperationId(data) {
     let swaggerOperationId = data.split(new RegExp("#swagger.operationId\\s*\\=\\s*"))[1]
@@ -459,7 +470,7 @@ function getOperationId(data) {
 
 /**
  * TODO: fill
- * @param {*} data 
+ * @param {*} data
  */
 function getTags(data) {
     let tags = []
@@ -483,7 +494,7 @@ function getTags(data) {
 
 /**
  * TODO: fill
- * @param {*} data 
+ * @param {*} data
  */
 function getSecurityTag(data) {
     return new Promise(async (resolve) => {
@@ -509,6 +520,7 @@ module.exports = {
     getPath,
     getMethodTag,
     getForcedEndpoints,
+    getDeprecatedTag,
     getIgnoreTag,
     getAutoTag,
     getParametersTag,
